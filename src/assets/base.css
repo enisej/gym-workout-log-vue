@@ -1,0 +1,47 @@
+/* Headings */
+.h1 {
+  @apply text-5xl font-black bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent;
+}
+
+.h2 {
+  @apply text-4xl font-black text-cyan-400 mb-8;
+}
+
+.h3 {
+  @apply text-2xl font-bold text-cyan-400 mb-4;
+}
+
+/* Cards */
+.card {
+  @apply bg-zinc-900 border border-zinc-800 rounded-2xl p-8;
+}
+
+.card-sm {
+  @apply bg-zinc-900 border border-zinc-800 rounded-xl p-6;
+}
+
+.card-xs {
+  @apply bg-zinc-800 rounded-xl p-4;
+}
+
+/* Buttons */
+.btn {
+  @apply px-6 py-3 text-lg font-bold rounded-xl transition;
+}
+
+.btn-primary {
+  @apply btn bg-cyan-500 text-black hover:bg-cyan-400;
+}
+
+.btn-ghost {
+  @apply btn bg-zinc-800 hover:bg-zinc-700 text-white;
+}
+
+.btn-danger {
+  @apply text-red-400 hover:text-red-300;
+}
+
+/* Inputs */
+.input {
+  @apply px-5 py-4 bg-zinc-800 rounded-xl text-white text-lg w-full;
+}
