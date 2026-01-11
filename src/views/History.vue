@@ -1,8 +1,10 @@
 <script setup>
 import { onMounted } from "vue";
 import { useGymStore } from "../stores/useGymStore";
+import { useRouter } from "vue-router";
 
 const store = useGymStore();
+const router = useRouter();
 
 onMounted(() => store.loadAll());
 
@@ -12,9 +14,10 @@ const confirmDelete = (id) => {
   }
 };
 
-/**
- * Group logs by exerciseName and combine repeated sets
- */
+const editSession = (id) => {
+  router.push(`/edit/${id}`);
+};
+
 const groupLogsByExercise = (logs) => {
   const map = {};
 
@@ -24,7 +27,6 @@ const groupLogsByExercise = (logs) => {
     map[key].push(log);
   });
 
-  // Return array of { exerciseName, sets: [...] }
   return Object.keys(map).map((name) => ({
     exerciseName: name,
     sets: map[name],
@@ -54,12 +56,20 @@ const groupLogsByExercise = (logs) => {
               {{ session.name || "Bez nosaukuma" }}
             </p>
           </div>
-          <button
-            @click="confirmDelete(session.id)"
-            class="text-red-400 hover:text-red-300 px-3 py-1 rounded-lg transition text-sm"
-          >
-            Dzēst
-          </button>
+          <div class="flex gap-2">
+            <button
+              @click="editSession(session.id)"
+              class="text-cyan-400 hover:text-cyan-300 px-3 py-1 rounded-lg transition text-sm border border-cyan-500 hover:border-cyan-400"
+            >
+              Labot
+            </button>
+            <button
+              @click="confirmDelete(session.id)"
+              class="text-red-400 hover:text-red-300 px-3 py-1 rounded-lg transition text-sm"
+            >
+              Dzēst
+            </button>
+          </div>
         </div>
 
         <!-- Exercise Logs -->

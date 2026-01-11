@@ -20,16 +20,30 @@
         Bez kategorijas
       </span>
     </div>
-    <button
-      @click="$emit('delete', exercise.id)"
-      class="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10 text-sm font-medium py-2 rounded-lg transition"
-    >
-      Dzēst
-    </button>
+    <div class="flex gap-2">
+      <button
+        @click="$emit('edit', exercise)"
+        class="flex-1 text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10 text-sm font-medium py-2 rounded-lg transition"
+      >
+        Labot
+      </button>
+      <button
+        @click="confirmDelete"
+        class="flex-1 text-red-400 hover:text-red-300 hover:bg-red-500/10 text-sm font-medium py-2 rounded-lg transition"
+      >
+        Dzēst
+      </button>
+    </div>
   </div>
 </template>
 
 <script setup>
-defineProps(["exercise"]);
-defineEmits(["delete"]);
+const props = defineProps(["exercise"]);
+const emit = defineEmits(["delete", "edit"]);
+
+const confirmDelete = () => {
+  if (confirm(`Vai tiešām vēlies dzēst "${props.exercise.name}"?`)) {
+    emit("delete", props.exercise.id);
+  }
+};
 </script>

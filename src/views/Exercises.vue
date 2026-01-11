@@ -7,6 +7,12 @@ const store = useGymStore();
 const newName = ref("");
 const selectedParts = ref([]);
 
+// Edit state
+const isEditing = ref(false);
+const editingExercise = ref(null);
+const editName = ref("");
+const editSelectedParts = ref([]);
+
 onMounted(() => store.loadAll());
 
 const addExercise = () => {
@@ -14,6 +20,36 @@ const addExercise = () => {
     store.addExercise(newName.value, selectedParts.value);
     newName.value = "";
     selectedParts.value = [];
+  }
+};
+
+const startEdit = (exercise) => {
+  editingExercise.value = exercise;
+  editName.value = exercise.name;
+  editSelectedParts.value = [...(exercise.bodyPartIds || [])];
+  isEditing.value = true;
+};
+
+const cancelEdit = () => {
+  isEditing.value = false;
+  editingExercise.value = null;
+  editName.value = "";
+  editSelectedParts.value = [];
+};
+
+const saveEdit = async () => {
+  if (!editName.value.trim()) return;
+
+  try {
+    await store.updateExercise(
+      editingExercise.value.id,
+      editName.value,
+      editSelectedParts.value
+    );
+    cancelEdit();
+  } catch (err) {
+    alert("Kļūda atjaunojot vingrinājumu!");
+    console.error(err);
   }
 };
 </script>
@@ -76,6 +112,7 @@ const addExercise = () => {
           :key="ex.id"
           :exercise="ex"
           @delete="store.deleteExercise"
+          @edit="startEdit"
         />
       </div>
       <div
@@ -83,6 +120,68 @@ const addExercise = () => {
         class="text-center py-16 text-slate-500"
       >
         Nav pievienotu vingrinājumu
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div
+      v-if="isEditing"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click.self="cancelEdit"
+    >
+      <div
+        class="bg-slate-900 border border-slate-800 rounded-xl p-6 max-w-2xl w-full"
+      >
+        <h3 class="text-2xl font-semibold mb-6 text-white">
+          Labot vingrinājumu
+        </h3>
+        <form @submit.prevent="saveEdit" class="space-y-4">
+          <div>
+            <label class="block text-sm text-slate-400 mb-2">Nosaukums</label>
+            <input
+              v-model="editName"
+              required
+              class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm text-slate-400 mb-2"
+              >Ķermeņa daļas</label
+            >
+            <select
+              v-model="editSelectedParts"
+              multiple
+              class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:border-cyan-500 min-h-[120px]"
+            >
+              <option
+                v-for="bp in store.bodyParts"
+                :key="bp.id"
+                :value="bp.id"
+                class="py-2"
+              >
+                {{ bp.name }}
+              </option>
+            </select>
+            <p class="text-xs text-slate-500 mt-2">
+              Turi Ctrl (vai Cmd) lai izvēlētos vairākas
+            </p>
+          </div>
+          <div class="flex gap-4">
+            <button
+              type="submit"
+              class="flex-1 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold py-3 rounded-lg transition"
+            >
+              Saglabāt
+            </button>
+            <button
+              type="button"
+              @click="cancelEdit"
+              class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-3 rounded-lg transition"
+            >
+              Atcelt
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
